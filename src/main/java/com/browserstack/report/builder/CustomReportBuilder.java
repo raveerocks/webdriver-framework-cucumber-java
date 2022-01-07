@@ -18,15 +18,17 @@ public class CustomReportBuilder {
     private CustomReportBuilder() {
     }
 
-    public static void createReport(String reportPath, RunTimeInfo runTimeInfo, List<Feature> features) throws IOException {
+    public static void createReport(String reportPath,String platform, RunTimeInfo runTimeInfo, List<Feature> features) throws IOException {
         CustomReportBuilder customReportBuilder = new CustomReportBuilder();
-        customReportBuilder.create(reportPath, runTimeInfo, features);
+        customReportBuilder.create(reportPath,platform, runTimeInfo, features);
     }
 
-    private void create(String reportPath, RunTimeInfo runTimeInfo, List<Feature> features) throws IOException {
+    private void create(String reportPath, String platform, RunTimeInfo runTimeInfo, List<Feature> features) throws IOException {
         createDirectories(reportPath);
         copyAssetsDirectory(SOURCE_ASSETS_DIRECTORY + "/css", reportPath + "/css");
         copyAssetsDirectory(SOURCE_ASSETS_DIRECTORY + "/js", reportPath + "/js");
+        reportPath = reportPath+"/"+platform;
+        createDirectories(reportPath);
         generateHtmlReport(reportPath, runTimeInfo, features);
     }
 
@@ -46,7 +48,7 @@ public class CustomReportBuilder {
         final List<String> modals = htmlReportBuilder.getHtmlModals();
         final HashMap<String, Object> reportData = new HashMap<>();
         Instant now = Instant.now();
-        reportData.put("reportTitle", now.toString());
+        reportData.put("reportTitle", now.toString().replace("/","-"));
         reportData.put("total", runTimeInfo.getTotal());
         reportData.put("passed", runTimeInfo.getPassed());
         reportData.put("failed", runTimeInfo.getFailed());

@@ -118,7 +118,7 @@ public class CustomReportListener implements ConcurrentEventListener {
                         report.failed,
                         report.rerun,Duration.between(buildStart,buildEnd).toMillis(),runtimeOptions);
                 try {
-                    CustomReportBuilder.createReport(reportPath + "/" + platform, runTimeInfo, report.getFeatures());
+                    CustomReportBuilder.createReport(reportPath,platform, runTimeInfo, report.getFeatures());
                 } catch (IOException e) {
                     LOGGER.error("Report Generation Failed", e);
                 }

@@ -146,9 +146,11 @@ public class CustomReportListener implements ConcurrentEventListener {
 
         public void addPassed(){
             ++passed;
+            ++total;
         }
         public void addFailed(){
             ++failed;
+            ++total;
         }
         public void addRerun(){
             ++rerun;

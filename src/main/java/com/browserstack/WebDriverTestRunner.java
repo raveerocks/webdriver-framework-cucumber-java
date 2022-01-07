@@ -35,24 +35,16 @@ public final class WebDriverTestRunner {
         CommandlineOptionsParser commandlineOptionsParser = new CommandlineOptionsParser(System.out);
         RuntimeOptions runtimeOptions = commandlineOptionsParser.parse(argv).addDefaultGlueIfAbsent().addDefaultFeaturePathIfAbsent().addDefaultFormatterIfAbsent().addDefaultSummaryPrinterIfAbsent().enablePublishPlugin().build(systemOptions);
         Optional<Byte> exitStatus = commandlineOptionsParser.exitStatus();
-        if (exitStatus.isPresent()) {
-            return;
-        } else {
-            WebDriverRuntime runtime = (isRerunEnabled ?
-                    WebDriverRuntime
-                            .builder()
-                            .withRerunEnabled() : WebDriverRuntime.builder().withRerunDisabled())
-                    .withRuntimeOptions(runtimeOptions).withClassLoader(() -> classLoader)
-                    .withAdditionalPlugins(additionalPlugins)
-                    .withRerunDisabled()
-                    .build();
-            LOGGER.info("Cucumber runtime created.");
-            //REPORT_DATA.startReporting();
-            //REPORT_DATA.setConcurrency(runtimeOptions.getThreads());
-            //REPORT_DATA.setFeatureFilePath(runtimeOptions.getGlue().toString());
-            //REPORT_DATA.setCucumberRunTags(runtimeOptions.getTagExpressions().toString());
+         if (!exitStatus.isPresent()) {
+            WebDriverRuntime.Builder builder = WebDriverRuntime.builder();
+            if (isRerunEnabled) {
+                builder.withRerunEnabled();
+            }
+            WebDriverRuntime runtime =
+                    builder.withRuntimeOptions(runtimeOptions).withClassLoader(() -> classLoader)
+                            .withAdditionalPlugins(additionalPlugins)
+                            .build();
             runtime.run();
-            //REPORT_DATA.buildReport();
         }
     }
 }

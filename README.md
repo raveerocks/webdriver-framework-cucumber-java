@@ -16,7 +16,7 @@ ExecutionStarted => Instant,Execution
 
 WebDriverCreated => Instant, WebDriver
 
-ExecutionFinished => Instant,Execution,WebDriver
+ExecutionCompleted => Instant,Execution,WebDriver
 
 BatchExecutionCompleted => Instant, Batch (int)
 

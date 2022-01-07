@@ -122,9 +122,6 @@ public class Test{
 6. Within your test steps are a base class  use ``WebDriverTestRunner`` to get the web driver
 ```java
 public class BaseStep {
-
-    WebDriverHolder webDriverHolder = new WebDriverHolder();
-
     public WebDriver getWebDriver(){
         return WebDriverTestRunner.getWebDriver();
     }

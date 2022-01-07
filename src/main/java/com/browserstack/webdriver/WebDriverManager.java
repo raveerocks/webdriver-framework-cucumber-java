@@ -1,6 +1,7 @@
-package com.browserstack;
+package com.browserstack.webdriver;
 
 
+import com.browserstack.WebDriverCreated;
 import com.browserstack.webdriver.core.WebDriverFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,23 +12,34 @@ import io.cucumber.plugin.event.TestCaseFinished;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-final class WebDriverListener implements ConcurrentEventListener {
+public final class WebDriverManager implements ConcurrentEventListener {
 
-    private final WebDriverFactory webDriverFactory = WebDriverFactory.getInstance();
-    private final ObjectMapper objectMapper = new ObjectMapper();
-    private final Logger LOGGER = LoggerFactory.getLogger(WebDriverListener.class);
+    private static final ThreadLocal<WebDriver> webDriverThreadLocal = new ThreadLocal<>();
+    private final WebDriverFactory webDriverFactory;
+    private final ObjectMapper objectMapper;
+
+    public WebDriverManager() {
+        this.webDriverFactory = WebDriverFactory.getInstance();
+        this.objectMapper = new ObjectMapper();
+    }
+
+    public static WebDriver getWebDriver() {
+        return webDriverThreadLocal.get();
+    }
 
     @Override
     public void setEventPublisher(EventPublisher eventPublisher) {
+        eventPublisher.registerHandlerFor(WebDriverCreated.class, this::grabWebDriver);
         eventPublisher.registerHandlerFor(TestCaseFinished.class, this::markAndCloseWebDriver);
     }
 
-    public void markAndCloseWebDriver(TestCaseFinished testCaseFinished) {
-        LOGGER.debug("Test completed");
-        WebDriver webDriver = WebDriverSupplier.getWebDriver();
+    private void grabWebDriver(WebDriverCreated webDriverCreated) {
+        webDriverThreadLocal.set(webDriverCreated.getWebDriver());
+    }
+
+    private void markAndCloseWebDriver(TestCaseFinished testCaseFinished) {
+        WebDriver webDriver = webDriverThreadLocal.get();
         try {
             if (webDriverFactory.isCloudDriver()) {
                 String status = "passed";
@@ -43,10 +55,8 @@ final class WebDriverListener implements ConcurrentEventListener {
             }
         } finally {
             if (webDriver != null) {
-                LOGGER.debug("Closing the driver");
                 webDriver.quit();
             }
-            WebDriverSupplier.popWebDriver();
         }
     }
 

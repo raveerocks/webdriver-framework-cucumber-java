@@ -17,6 +17,7 @@
         <slf4j.version>1.7.25</slf4j.version>
         <logback.version>1.2.3</logback.version>
         <jackson.version>2.12.2</jackson.version>
+        <mustache-java.version>0.9.10</mustache-java.version>
     </properties>
 
     <dependencies>
@@ -49,6 +50,11 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.spullara.mustache.java</groupId>
+            <artifactId>compiler</artifactId>
+            <version>${mustache-java.version}</version>
         </dependency>
     </dependencies>
 </project>
